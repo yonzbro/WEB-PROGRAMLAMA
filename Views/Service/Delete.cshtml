@@ -1,0 +1,66 @@
+﻿@model GymProject1.Entities.Service
+
+@{
+    ViewData["Title"] = "Hizmeti Sil";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <div class="card bg-dark border-danger shadow">
+
+                <div class="card-header bg-danger text-white">
+                    <h4 class="fw-bold mb-0">
+                        Hizmeti Sil
+                    </h4>
+                </div>
+
+                <div class="card-body text-light">
+
+                    <div class="alert alert-light text-danger fw-bold border-0 mb-4" role="alert">
+                        Bu kaydı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.
+                    </div>
+
+                    <dl class="row">
+                        <dt class="col-sm-4 text-secondary">
+                            @Html.DisplayNameFor(model => model.Name)
+                        </dt>
+                        <dd class="col-sm-8 fw-bold fs-5">
+                            @Html.DisplayFor(model => model.Name)
+                        </dd>
+
+                        <dt class="col-sm-4 text-secondary">
+                            @Html.DisplayNameFor(model => model.DurationMinutes)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.DurationMinutes) Dakika
+                        </dd>
+
+                        <dt class="col-sm-4 text-secondary">
+                            @Html.DisplayNameFor(model => model.Price)
+                        </dt>
+                        <dd class="col-sm-8 text-success fw-bold">
+                            @Html.DisplayFor(model => model.Price) ₺
+                        </dd>
+                    </dl>
+
+                    <hr class="border-secondary" />
+
+                    <form asp-action="Delete" class="d-grid gap-2">
+                        <input type="hidden" asp-for="ServiceId" />
+
+                        <button type="submit" class="btn btn-danger fw-bold btn-lg">
+                            Evet, Sil
+                        </button>
+
+                        <a asp-action="Index" class="btn btn-secondary">
+                            İptal / Listeye Dön
+                        </a>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

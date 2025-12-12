@@ -1,0 +1,68 @@
+@model GymProject1.Entities.Appointment
+
+@{
+    ViewData["Title"] = "Randevu Al";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0" style="background-color: #1e1e1e;">
+                <div class="card-header bg-warning text-dark">
+                    <h3 class="fw-bold mb-0"><i class="fa-solid fa-calendar-check"></i> Yeni Randevu Oluştur</h3>
+                </div>
+                <div class="card-body p-4 text-white">
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <ul class="mb-0">
+                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                {
+                                    <li>@error.ErrorMessage</li>
+                                }
+                            </ul>
+                        </div>
+                    }
+
+                    <form asp-action="Create">
+
+                        <div class="mb-4">
+                            <label asp-for="AppointmentDate" class="form-label text-warning fw-bold">Tarih ve Saat</label>
+                            <input asp-for="AppointmentDate" class="form-control" type="datetime-local"
+                                   style="background-color: #2d2d2d; color: white; border: 1px solid #444;" required />
+                            <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                            <small class="text-muted">Lütfen çalışma saatleri (09:00 - 23:00) arasında seçiniz.</small>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="TrainerId" class="form-label text-warning fw-bold">Eğitmen Seçiniz</label>
+                                <select asp-for="TrainerId" class="form-select" asp-items="ViewBag.TrainerId"
+                                        style="background-color: #2d2d2d; color: white; border: 1px solid #444;">
+                                </select>
+                                <span asp-validation-for="TrainerId" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="ServiceId" class="form-label text-warning fw-bold">Hizmet Seçiniz</label>
+                                <select asp-for="ServiceId" class="form-select" asp-items="ViewBag.ServiceId"
+                                        style="background-color: #2d2d2d; color: white; border: 1px solid #444;">
+                                </select>
+                                <span asp-validation-for="ServiceId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-warning btn-lg fw-bold text-dark">
+                                RANDEVUYU ONAYLA
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-light">Listeye Dön</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "Kampanya Oluştur";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success fw-bold">
+                    <i class="fas fa-check-circle"></i> @TempData["Success"]
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger fw-bold">
+                    <i class="fas fa-exclamation-triangle"></i> @TempData["Error"]
+                </div>
+            }
+
+            <div class="card shadow-lg bg-dark border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h3 class="mb-0 fw-bold"><i class="fas fa-bullhorn me-2"></i> Yeni Kampanya Duyurusu</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-controller="Campaign" asp-action="SendEmail" method="post">
+
+                        <div class="mb-3">
+                            <label class="form-label text-warning fw-bold">Konu</label>
+                            <input type="text" name="subject" class="form-control bg-secondary text-white border-0" placeholder="Örn: Yaz İndirimleri Başladı!" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-warning fw-bold">Mesaj</label>
+                            <textarea name="messageBody" class="form-control bg-secondary text-white border-0" rows="8" placeholder="Kampanya detaylarını buraya yazınız..." required></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-warning btn-lg fw-bold">
+                                <i class="fas fa-paper-plane me-2"></i> Tüm Üyelere Gönder
+                            </button>
+                            <a asp-controller="Admin" asp-action="Index" class="btn btn-outline-light">Panele Dön</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="alert alert-info mt-3">
+                <i class="fas fa-info-circle"></i> <strong>Bilgi:</strong> Bu mesaj veritabanındaki tüm kayıtlı üyelerin e-posta adresine gönderilecektir.
+            </div>
+        </div>
+    </div>
+</div>

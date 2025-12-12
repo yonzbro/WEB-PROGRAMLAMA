@@ -1,0 +1,76 @@
+﻿@{
+    ViewData["Title"] = "Yönetim Paneli";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-warning" style="letter-spacing: 2px;">YÖNETİM PANELİ</h1>
+        <p class="lead text-white-50">Spor salonunun kontrol merkezi.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 bg-dark border-secondary shadow-lg">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-dumbbell fa-4x text-warning mb-3"></i>
+                    <h3 class="text-white fw-bold">Eğitmenler</h3>
+                    <p class="text-white-50">Toplam: @ViewBag.TrainerCount Eğitmen</p>
+                    <a asp-controller="Trainer" asp-action="Index" class="btn btn-outline-warning w-100">YÖNET</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 bg-dark border-secondary shadow-lg">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-tags fa-4x text-warning mb-3"></i>
+                    <h3 class="text-white fw-bold">Paketler</h3>
+                    <p class="text-white-50">Toplam: @ViewBag.ServiceCount Paket</p>
+                    <a asp-controller="Service" asp-action="Index" class="btn btn-outline-warning w-100">YÖNET</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 bg-dark border-secondary shadow-lg">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-calendar-check fa-4x text-warning mb-3"></i>
+                    <h3 class="text-white fw-bold">Randevular</h3>
+                    <p class="text-white-50">Bekleyen ve Onaylananlar</p>
+                    <a asp-controller="Appointment" asp-action="Index" class="btn btn-outline-warning w-100">YÖNET</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card h-100 bg-dark border-secondary shadow-lg">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-building fa-4x text-warning mb-3"></i>
+                    <h3 class="text-white fw-bold">Şubeler</h3>
+                    <a asp-controller="Salon" asp-action="Index" class="btn btn-outline-warning w-100">YÖNET</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card h-100 border-warning shadow-lg" style="background-color: #1a1a1a;">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-envelope-open-text fa-4x text-warning mb-3"></i>
+                    <h3 class="text-white fw-bold">Kampanya Bildirimi</h3>
+                    <p class="text-white-50">Tüm üyelere toplu mail gönder.</p>
+                    <a asp-controller="Campaign" asp-action="Index" class="btn btn-warning w-100 fw-bold text-dark">MAİL GÖNDER</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100 border-info shadow-lg" style="background-color: #1a1a1a;">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-users-gear fa-4x text-info mb-3"></i>
+                    <h3 class="text-white fw-bold">Üye Yönetimi</h3>
+                    <p class="text-white-50">Kayıtlı üyeleri listele ve yönet.</p>
+                    <a asp-controller="Admin" asp-action="Members" class="btn btn-info w-100 fw-bold text-dark">LİSTEYE GİT</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

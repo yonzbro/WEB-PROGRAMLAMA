@@ -1,0 +1,67 @@
+﻿@model IEnumerable<GymProject1.Entities.Service>
+
+@{
+    ViewData["Title"] = "Paketler";
+}
+
+<div class="container mt-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-warning fw-bold"><i class="fas fa-cubes me-2"></i> PAKETLERİMİZ</h2>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn btn-success">
+                <i class="fas fa-plus-circle"></i> Yeni Paket Ekle
+            </a>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            <h5>Henüz eklenmiş bir paket bulunmuyor.</h5>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-4">
+                    <div class="card h-100 bg-dark text-white border-secondary shadow">
+                        <div class="card-header border-warning">
+                            <h4 class="card-title text-warning mb-0">@item.Name</h4>
+                        </div>
+                        <div class="card-body">
+                            <h2 class="display-6 fw-bold">@item.Price.ToString("C2")</h2> <p class="text-muted">@item.DurationMinutes Dakika</p>
+
+                            @if (!string.IsNullOrEmpty(item.Description))
+                            {
+                                <p class="card-text border-top border-secondary pt-3">
+                                    @item.Description
+                                </p>
+                            }
+                        </div>
+                        <div class="card-footer bg-transparent border-secondary">
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <div class="d-flex justify-content-between">
+                                    <a asp-action="Edit" asp-route-id="@item.ServiceId" class="btn btn-sm btn-outline-warning">Düzenle</a>
+                                    <a asp-action="Delete" asp-route-id="@item.ServiceId" class="btn btn-sm btn-outline-danger">Sil</a>
+                                </div>
+                            }
+                            else
+                            {
+                                <a asp-controller="Appointment" asp-action="Create" class="btn btn-warning w-100 text-dark fw-bold">
+                                    Hemen Başla
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

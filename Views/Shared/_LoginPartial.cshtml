@@ -1,0 +1,33 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using GymProject1.Entities
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-warning fw-bold" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+                <i class="fa-solid fa-user"></i> @User.Identity?.Name
+            </a>
+        </li>
+        <li class="nav-item">
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button type="submit" class="nav-link btn btn-link text-danger fw-bold" style="text-decoration: none;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Çıkış
+                </button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Register">Kayıt Ol</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link btn btn-outline-warning ms-2 px-3 text-dark fw-bold" style="background-color: var(--primary-color);" asp-area="Identity" asp-page="/Account/Login">
+                <i class="fa-solid fa-right-to-bracket"></i> Giriş Yap
+            </a>
+        </li>
+    }
+</ul>

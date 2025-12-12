@@ -1,0 +1,178 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using GymProject1.Entities
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - GYM-A</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/GymProject1.styles.css" asp-append-version="true" />
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark border-bottom shadow-sm mb-3">
+            <div class="container">
+                <a class="navbar-brand text-warning fw-bold" asp-area="" asp-controller="Home" asp-action="Index" style="font-size: 1.5rem; letter-spacing: 2px;">
+                    <i class="fas fa-dumbbell me-2"></i>GYM-A
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Navigasyonu Aç">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+
+                    <ul class="navbar-nav flex-grow-1 align-items-center">
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-warning fw-bold" asp-controller="AI" asp-action="Index">AI Antrenör</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-controller="Trainer" asp-action="Index">Eğitmenler</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-controller="Appointment" asp-action="Index">Randevular</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-controller="Service" asp-action="Index">Paketler</a>
+                        </li>
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item ms-2">
+                                <a class="nav-link btn btn-sm btn-outline-danger text-white px-3 fw-bold" style="border: 1px solid #dc3545;" asp-controller="Admin" asp-action="Index">
+                                    <i class="fas fa-cogs me-1"></i> YÖNETİM PANELİ
+                                </a>
+                            </li>
+                        }
+                    </ul>
+
+                    <ul class="navbar-nav">
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle btn btn-outline-light px-4 py-2 text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user-circle me-2 text-warning"></i> @User.Identity?.Name
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="navbarDropdown">
+
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <li>
+                                            <a class="dropdown-item fw-bold text-danger" asp-controller="Admin" asp-action="Index">
+                                                <i class="fas fa-cogs me-2"></i> Yönetim Paneli
+                                            </a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li>
+                                            <a class="dropdown-item text-warning fw-bold" asp-controller="Appointment" asp-action="Hakkinda">
+                                                <i class="fas fa-id-card-alt me-2"></i> Hakkında & Kayıtlarım
+                                            </a>
+                                        </li>
+                                    }
+                                    <li><hr class="dropdown-divider bg-secondary"></li>
+
+                                    <li>
+                                        <a class="dropdown-item text-white" asp-area="Identity" asp-page="/Account/Manage/Index">
+                                            <i class="fas fa-user-cog me-2"></i> Hesap Ayarları
+                                        </a>
+                                    </li>
+
+                                    <li><hr class="dropdown-divider bg-secondary"></li>
+
+                                    <li>
+                                        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                                            <button type="submit" class="dropdown-item text-white">
+                                                <i class="fas fa-sign-out-alt me-2"></i> Çıkış Yap
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="btn btn-outline-light me-2 px-4" asp-area="Identity" asp-page="/Account/Register">Kayıt Ol</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-warning text-dark fw-bold px-4" asp-area="Identity" asp-page="/Account/Login">Giriş Yap</a>
+                            </li>
+                        }
+                    </ul>
+
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" class="pb-3" style="flex: 1;">
+        @RenderBody()
+    </main>
+
+    @{
+        // Ana sayfa kontrolü - sadece Home/Index'te footer göster
+        var isHomePage = ViewContext.RouteData.Values["controller"]?.ToString() == "Home" &&
+        ViewContext.RouteData.Values["action"]?.ToString() == "Index";
+    }
+
+    @if (isHomePage)
+    {
+        <footer class="footer mt-auto" style="background-color: #000; border-top: 1px solid #ffc107; padding: 1rem 0;">
+            <div class="container">
+                <div class="row g-2 align-items-center">
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center mb-1">
+                            <i class="fas fa-dumbbell text-warning me-2" style="font-size: 0.9rem;"></i>
+                            <span class="text-warning fw-bold" style="font-size: 0.85rem;">GYM-A</span>
+                        </div>
+                        <p class="text-white-50 mb-0" style="font-size: 0.75rem; line-height: 1.3;">
+                            Sağlıklı yaşamın ve fitness tutkunlarının buluşma noktası.
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <ul class="list-unstyled mb-0 d-flex flex-wrap gap-2" style="font-size: 0.75rem;">
+                            <li><a asp-controller="Home" asp-action="Index" class="text-white-50 text-decoration-none">Ana Sayfa</a></li>
+                            <li><span class="text-white-50">|</span></li>
+                            <li><a asp-controller="Trainer" asp-action="Index" class="text-white-50 text-decoration-none">Eğitmenler</a></li>
+                            <li><span class="text-white-50">|</span></li>
+                            <li><a asp-controller="Service" asp-action="Index" class="text-white-50 text-decoration-none">Paketler</a></li>
+                            <li><span class="text-white-50">|</span></li>
+                            <li><a asp-controller="Appointment" asp-action="Index" class="text-white-50 text-decoration-none">Randevular</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="text-white-50 mb-0" style="font-size: 0.75rem;">
+                            <i class="fas fa-envelope me-1"></i>info@gym-a.com
+                            <span class="ms-2"><i class="fas fa-clock me-1"></i>10:00-22:30</span>
+                        </p>
+                    </div>
+                </div>
+                <hr class="my-1" style="border-color: #333; margin: 0.5rem 0 !important;">
+                <div class="text-center">
+                    <span class="text-white-50" style="font-size: 0.7rem;">&copy; 2025 - GYM-A - Tüm Hakları Saklıdır</span>
+                </div>
+            </div>
+        </footer>
+    }
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

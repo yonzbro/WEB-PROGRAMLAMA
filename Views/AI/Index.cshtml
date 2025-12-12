@@ -1,0 +1,114 @@
+﻿@model GymProject1.Models.AiPlanViewModel
+
+@{
+    ViewData["Title"] = "AI Antrenör";
+    // Kullanıcının giriş yapıp yapmadığını değişkene atayalım
+    bool isUserLoggedIn = User.Identity.IsAuthenticated;
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4><i class="fas fa-robot"></i> AI Antrenörüne Danış</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Index" method="post" enctype="multipart/form-data">
+
+                        <div class="mb-3">
+                            <label>Yaşınız</label>
+                            <input asp-for="Age" class="form-control" type="number" required
+                                   disabled="@(isUserLoggedIn ? null : "disabled")" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Cinsiyet</label>
+                            <select asp-for="Gender" class="form-select"
+                                    disabled="@(isUserLoggedIn ? null : "disabled")">
+                                <option value="Erkek">Erkek</option>
+                                <option value="Kadın">Kadın</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Kilo (kg)</label>
+                            <input asp-for="Weight" class="form-control" type="number" step="0.1" required
+                                   disabled="@(isUserLoggedIn ? null : "disabled")" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Boy (cm)</label>
+                            <input asp-for="Height" class="form-control" type="number" required
+                                   disabled="@(isUserLoggedIn ? null : "disabled")" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Hedefiniz Nedir?</label>
+                            <textarea asp-for="Goal" class="form-control" rows="3"
+                                      placeholder="Örn: Kilo vermek istiyorum..."
+                                      disabled="@(isUserLoggedIn ? null : "disabled")"></textarea>
+                            <span asp-validation-for="Goal" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Fotoğraf Yükle (Opsiyonel - Vücut Analizi İçin)</label>
+                            <input asp-for="Photo" type="file" class="form-control" accept="image/*"
+                                   disabled="@(isUserLoggedIn ? null : "disabled")" />
+                            <small class="text-muted">JPG, PNG veya GIF formatında fotoğraf yükleyebilirsiniz.</small>
+                        </div>
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        @if (isUserLoggedIn)
+                        {
+                            <button type="submit" class="btn btn-success w-100">
+                                Plan Oluştur <i class="fas fa-magic"></i>
+                            </button>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning text-center p-2 mb-2">
+                                <small>Kullanmak için üye olmalısınız.</small>
+                            </div>
+                            <a href="/Identity/Account/Register" class="btn btn-primary w-100 mb-2">
+                                Üye Ol
+                            </a>
+                            <a href="/Identity/Account/Login" class="btn btn-outline-secondary w-100">
+                                Giriş Yap
+                            </a>
+                        }
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            @if (!string.IsNullOrEmpty(Model.AiResponse))
+            {
+                <div class="card shadow border-secondary bg-dark text-white mb-5">
+
+                    <div class="card-header bg-success text-white fw-bold">
+                        <i class="fas fa-clipboard-check me-2"></i> Senin İçin Hazırlanan Plan
+                    </div>
+
+                    <div class="card-body" style="background-color: #2b3035; color: #ffffff;">
+                        <div style="white-space: pre-wrap;">@Model.AiResponse</div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-dark border-secondary text-white mt-3" role="alert">
+                    <h5 class="alert-heading"><i class="fas fa-info-circle"></i> Bilgilendirme</h5>
+                    <p>Sol taraftaki bilgileri doldurup "Plan Oluştur" butonuna bastığında, Yapay Zeka sana özel antrenman ve beslenme programını burada oluşturacaktır.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

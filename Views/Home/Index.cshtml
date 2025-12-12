@@ -1,0 +1,265 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<!-- Hero Section -->
+<section class="hero-section position-relative overflow-hidden text-white" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); min-height: 90vh; display: flex; align-items: center;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-2 fw-bold mb-4" style="font-size: 4rem; line-height: 1.2;">
+                    Sınırlarını <span class="text-warning">Zorla</span>
+                </h1>
+                <p class="lead mb-4" style="font-size: 1.5rem; color: #ccc;">
+                    Profesyonel eğitmenler eşliğinde hedeflerine ulaş
+                </p>
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <div class="d-flex gap-3">
+                        <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-warning btn-lg px-5 py-3 fw-bold">
+                            Hemen Başla
+                        </a>
+                        <a asp-controller="Trainer" asp-action="Index" class="btn btn-outline-light btn-lg px-5 py-3">
+                            Eğitmenlerimiz
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex gap-3">
+                        <a asp-controller="Appointment" asp-action="Create" class="btn btn-warning btn-lg px-5 py-3 fw-bold">
+                            Randevu Al
+                        </a>
+                        <a asp-controller="AI" asp-action="Index" class="btn btn-outline-light btn-lg px-5 py-3">
+                            AI Antrenör
+                        </a>
+                    </div>
+                }
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="hero-image" style="opacity: 0.8;">
+                    <i class="fas fa-dumbbell" style="font-size: 20rem; color: rgba(255, 193, 7, 0.1);"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5" style="background-color: #1a1a1a;">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="text-center p-4">
+                    <div class="feature-icon mb-3" style="font-size: 4rem; color: #ffc107;">
+                        <i class="fas fa-dumbbell"></i>
+                    </div>
+                    <h3 class="text-white mb-3">En İyi Ekipmanlar</h3>
+                    <p class="text-muted">Modern ve kaliteli ekipmanlarla antrenmanını tamamla</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center p-4">
+                    <div class="feature-icon mb-3" style="font-size: 4rem; color: #ffc107;">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="text-white mb-3">Daha Güçlü, Daha Hızlı</h3>
+                    <p class="text-muted">Kendini aşmanın tam zamanı</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center p-4">
+                    <div class="feature-icon mb-3" style="font-size: 4rem; color: #ffc107;">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3 class="text-white mb-3">Hedefin İçin Çalış</h3>
+                    <p class="text-muted">Pes etme, zirve seni bekliyor</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="py-5" style="background-color: #2d2d2d;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h2 class="display-4 fw-bold text-white mb-4">Hakkımızda</h2>
+                <h4 class="text-warning mb-4">GYM-A - Sakarya'nın Yeni Fitness Deneyimi!</h4>
+                <p class="lead text-white-50 mb-4">
+                    Sağlıklı yaşamı bir alışkanlığa dönüştürmek isteyenler için sadece bir spor salonu değil, 
+                    yenilikçi ve modern bir yaşam alanı sunuyoruz. Bedenin ve zihnin uyum içinde geliştiği bu 
+                    dinamik ortamda, en ileri teknolojiye sahip spor ekipmanları, uzman antrenörler ve özel 
+                    antrenman alanları ile spor deneyimini bir üst seviyeye taşıyoruz.
+                </p>
+                <p class="text-white-50">
+                    Hedeflerin ne olursa olsun, GYM-A'da seni destekleyecek her şey var! Kişiye özel antrenman 
+                    programları, fonksiyonel ve ağırlık çalışma alanları ve özel tasarım stüdyoları ile spor 
+                    yaparken kendini ayrıcalıklı hissedeceksin.
+                </p>
+            </div>
+            <div class="col-lg-6">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="card bg-dark border-warning text-center p-4 h-100">
+                            <h2 class="text-warning fw-bold mb-2">@ViewBag.TrainerCount+</h2>
+                            <p class="text-white mb-0">Uzman Eğitmen</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card bg-dark border-warning text-center p-4 h-100">
+                            <h2 class="text-warning fw-bold mb-2">@ViewBag.ServiceCount+</h2>
+                            <p class="text-white mb-0">Hizmet Paketi</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card bg-dark border-warning text-center p-4 h-100">
+                            <h2 class="text-warning fw-bold mb-2">@ViewBag.SalonCount+</h2>
+                            <p class="text-white mb-0">Şube</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card bg-dark border-warning text-center p-4 h-100">
+                            <h2 class="text-warning fw-bold mb-2">@ViewBag.AppointmentCount+</h2>
+                            <p class="text-white mb-0">Aktif Randevu</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="py-5" style="background-color: #1a1a1a;">
+    <div class="container">
+        <h2 class="display-4 fw-bold text-center text-white mb-5">Özelliklerimiz</h2>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card bg-dark border-secondary h-100 text-center p-4">
+                    <i class="fas fa-cogs fa-3x text-warning mb-3"></i>
+                    <h5 class="text-white mb-3">Modern Ekipmanlar</h5>
+                    <p class="text-muted">En son teknoloji fitness ekipmanlarıyla antrenmanlarınızı maksimum verimle tamamlayın.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card bg-dark border-secondary h-100 text-center p-4">
+                    <i class="fas fa-user-tie fa-3x text-warning mb-3"></i>
+                    <h5 class="text-white mb-3">Uzman Eğitmenler</h5>
+                    <p class="text-muted">Profesyonel ve sertifikalı eğitmenlerimiz ile kişisel hedeflerinize daha hızlı ulaşın.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card bg-dark border-secondary h-100 text-center p-4">
+                    <i class="fas fa-clock fa-3x text-warning mb-3"></i>
+                    <h5 class="text-white mb-3">Geniş Çalışma Saatleri</h5>
+                    <p class="text-muted">Size uygun saatlerde antrenman yapın, zaman sizin kontrolünüzde.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card bg-dark border-secondary h-100 text-center p-4">
+                    <i class="fas fa-trophy fa-3x text-warning mb-3"></i>
+                    <h5 class="text-white mb-3">Başarı Garantisi</h5>
+                    <p class="text-muted">Kişisel programınız ile hedeflerinize ulaşmanızı garantiliyoruz.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Trainers Preview Section -->
+@{
+    var recentTrainers = ViewBag.RecentTrainers as List<Trainer>;
+}
+@if (recentTrainers != null && recentTrainers.Count > 0)
+{
+    <section class="py-5" style="background-color: #2d2d2d;">
+        <div class="container">
+            <h2 class="display-4 fw-bold text-center text-white mb-5">Eğitmenlerimiz</h2>
+            <div class="row g-4">
+                @foreach (var trainer in recentTrainers)
+                {
+                    <div class="col-md-4">
+                        <div class="card bg-dark border-secondary h-100 overflow-hidden">
+                            @if (!string.IsNullOrEmpty(trainer.ImageUrl))
+                            {
+                                <img src="@trainer.ImageUrl" class="card-img-top" alt="@trainer.Name" style="height: 300px; object-fit: cover;">
+                            }
+                            else
+                            {
+                                <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 300px;">
+                                    <i class="fas fa-user fa-5x text-white-50"></i>
+                                </div>
+                            }
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-white">@trainer.Name</h5>
+                                <p class="text-warning mb-2">@trainer.Specialization</p>
+                                @if (trainer.Salon != null)
+                                {
+                                    <p class="text-muted small">@trainer.Salon.Name</p>
+                                }
+                                <a asp-controller="Trainer" asp-action="Details" asp-route-id="@trainer.TrainerId" class="btn btn-outline-warning mt-2">
+                                    Detaylar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="text-center mt-5">
+                <a asp-controller="Trainer" asp-action="Index" class="btn btn-warning btn-lg px-5">
+                    Tüm Eğitmenleri Gör
+                </a>
+            </div>
+        </div>
+    </section>
+}
+
+<!-- CTA Section -->
+<section class="py-5" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);">
+    <div class="container text-center">
+        <h2 class="display-4 fw-bold text-dark mb-4">Grup Dersleri</h2>
+        <p class="lead text-dark mb-4">Motivasyonunu yüksek tut, birlikte daha güçlüyüz</p>
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-dark btn-lg px-5">
+                Hemen Üye Ol
+            </a>
+        }
+        else
+        {
+            <a asp-controller="Appointment" asp-action="Create" class="btn btn-dark btn-lg px-5">
+                Randevu Al
+            </a>
+        }
+    </div>
+</section>
+
+<!-- Contact Info Section -->
+<section class="py-5" style="background-color: #1a1a1a;">
+    <div class="container">
+        <h2 class="display-4 fw-bold text-center text-white mb-5">İletişim</h2>
+        <div class="row g-4">
+            <div class="col-md-4 text-center">
+                <i class="fas fa-map-marker-alt fa-3x text-warning mb-3"></i>
+                <h5 class="text-white mb-3">Adres</h5>
+                <p class="text-muted">Sakarya, Türkiye</p>
+            </div>
+            <div class="col-md-4 text-center">
+                <i class="fas fa-envelope fa-3x text-warning mb-3"></i>
+                <h5 class="text-white mb-3">Email</h5>
+                <p class="text-muted">info@gym-a.com</p>
+            </div>
+            <div class="col-md-4 text-center">
+                <i class="fas fa-clock fa-3x text-warning mb-3"></i>
+                <h5 class="text-white mb-3">Çalışma Saatleri</h5>
+                <p class="text-muted">Pazartesi - Cuma: 10:00 - 22:30<br>Cumartesi: 10:00 - 22:00</p>
+            </div>
+        </div>
+</div>
+</section>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+}

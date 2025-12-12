@@ -1,0 +1,76 @@
+﻿@model IEnumerable<GymProject1.Entities.Trainer>
+
+@{
+    ViewData["Title"] = "Eğitmen Kadromuz";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-warning" style="font-style: italic; letter-spacing: 2px;">EĞİTMEN KADROMUZ</h1>
+        <p class="lead text-white-50">Sınırlarını zorlaman için yanındayız.</p>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn btn-outline-warning btn-lg mt-3">
+                <i class="fa-solid fa-plus"></i> Yeni Eğitmen Ekle
+            </a>
+        }
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <div class="card h-100 border-0 shadow-lg" style="background-color: var(--card-bg); overflow: hidden;">
+
+                    <div style="height: 350px; overflow: hidden; position: relative;">
+                        <img src="@(!string.IsNullOrEmpty(item.ImageUrl) ? item.ImageUrl : "/img/default-user.png")"
+                             class="card-img-top"
+                             alt="@item.Name"
+                             style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
+                    </div>
+
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-white fw-bold mt-2">@item.Name</h5>
+
+                        <p class="card-text text-warning fw-bold mb-1">
+                            <i class="fa-solid fa-dumbbell"></i> @item.Specialization
+                        </p>
+
+                        <small class="text-muted d-block mb-3">
+                            <i class="fa-solid fa-location-dot"></i>
+                            @(item.Salon != null ? item.Salon.Name : "Merkez Şube")
+                        </small>
+                    </div>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="card-footer bg-transparent border-secondary d-flex justify-content-between">
+                            <a asp-action="Edit" asp-route-id="@item.TrainerId" class="btn btn-sm btn-info text-dark fw-bold">
+                                <i class="fa-solid fa-pen-to-square"></i> Düzenle
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.TrainerId" class="btn btn-sm btn-danger">
+                                <i class="fa-solid fa-trash"></i> Sil
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .card:hover .card-img-top {
+        transform: scale(1.05); /* Resim hafif yakınlaşır */
+    }
+
+    .card {
+        transition: transform 0.3s;
+    }
+
+        .card:hover {
+            transform: translateY(-5px); /* Kart hafif yukarı kalkar */
+            box-shadow: 0 10px 20px rgba(255, 193, 7, 0.2) !important; /* Sarı gölge */
+        }
+</style>

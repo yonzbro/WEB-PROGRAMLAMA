@@ -1,0 +1,60 @@
+﻿@model IEnumerable<GymProject1.Entities.Salon>
+
+@{
+    ViewData["Title"] = "Şubelerimiz";
+}
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h2 class="text-warning fw-bold display-5">ŞUBELERİMİZ</h2>
+            <p class="text-light">Size en yakın salonumuzu bulun.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-warning fw-bold shadow">
+            <i class="bi bi-plus-circle"></i> Yeni Şube Ekle
+        </a>
+    </div>
+
+    <div class="row">
+        @if (!Model.Any())
+        {
+            <div class="alert alert-dark border-warning text-center w-100">
+                Henüz kayıtlı bir salon bulunmamaktadır.
+            </div>
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card bg-dark border-secondary h-100 shadow-lg">
+                        <div class="card-body">
+                            <h3 class="card-title text-warning fw-bold">
+                                <i class="bi bi-geo-alt-fill me-2"></i>@item.Name
+                            </h3>
+                            <hr class="border-secondary" />
+
+                            <p class="card-text text-light mb-2">
+                                <strong class="text-muted">Adres:</strong><br />
+                                @item.Address
+                            </p>
+
+                            <p class="card-text text-light">
+                                <strong class="text-muted">Çalışma Saatleri:</strong><br />
+                                <span class="badge bg-secondary text-light">@item.WorkingHours</span>
+                            </p>
+                        </div>
+
+                        <div class="card-footer bg-transparent border-top border-secondary d-flex justify-content-between">
+                            <div class="btn-group" role="group">
+                                <a asp-action="Edit" asp-route-id="@item.SalonId" class="btn btn-sm btn-outline-warning">Düzenle</a>
+                                <a asp-action="Details" asp-route-id="@item.SalonId" class="btn btn-sm btn-outline-info">Detay</a>
+                            </div>
+                            <a asp-action="Delete" asp-route-id="@item.SalonId" class="btn btn-sm btn-outline-danger">Sil</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
