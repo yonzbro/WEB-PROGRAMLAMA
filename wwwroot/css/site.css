@@ -1,0 +1,203 @@
+:root {
+    --primary-color: #ffc107; /* Spor salonu sar�s� */
+    --text-on-primary: #000000;
+    --dark-bg: #121212; /* Tam siyah de�il, g�z yormayan koyu gri */
+    --card-bg: #1e1e1e;
+    --input-bg: #2d2d2d;
+    --text-light: #f8f9fa;
+    --text-muted: #adb5bd;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    background-color: var(--dark-bg);
+    color: var(--text-light);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* --- NAVBAR (�ST MEN�) --- */
+.navbar {
+    background-color: #000 !important;
+    border-bottom: 2px solid var(--primary-color);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.navbar-brand {
+    font-weight: 800;
+    color: var(--primary-color) !important;
+    font-style: italic;
+    letter-spacing: 1px;
+}
+
+.nav-link {
+    color: #e0e0e0 !important;
+    transition: all 0.3s ease;
+}
+
+    .nav-link:hover {
+        color: var(--primary-color) !important;
+        transform: translateY(-2px); /* �zerine gelince hafif z�plama */
+    }
+
+/* --- KARTLAR (E�itmenler vb. i�in) --- */
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid #333;
+    color: var(--text-light);
+}
+
+.card-header {
+    background-color: rgba(255, 193, 7, 0.1);
+    border-bottom: 1px solid #333;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+/* --- FORM ELEMANLARI (Karanl�k Mod) --- */
+.form-control, .form-select {
+    background-color: var(--input-bg);
+    border: 1px solid #444;
+    color: var(--text-light);
+}
+
+    .form-control:focus, .form-select:focus {
+        background-color: #333;
+        color: #fff;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25); /* Sar� parlama */
+    }
+
+    /* Placeholder rengini d�zeltme */
+    .form-control::placeholder {
+        color: var(--text-muted);
+    }
+
+/* --- BUTONLAR --- */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--text-on-primary);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+    .btn-primary:hover {
+        background-color: #e0a800;
+        border-color: #d39e00;
+        color: #000;
+    }
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+    .btn-outline-primary:hover {
+        background-color: var(--primary-color);
+        color: #000;
+    }
+
+/* --- FOOTER --- */
+footer {
+    width: 100%;
+    background-color: #000;
+    color: #888;
+    font-size: 0.75rem;
+}
+
+footer a:hover {
+    color: #ffc107 !important;
+    transition: color 0.3s ease;
+}
+
+footer h6 {
+    font-size: 0.85rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+footer p, footer li {
+    font-size: 0.75rem !important;
+    margin-bottom: 0.25rem !important;
+}
+
+footer .container {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+}
+
+/* Minimal footer için daha küçük padding */
+footer.minimal-footer {
+    padding: 0.3rem 0 !important;
+}
+
+footer.minimal-footer .container {
+    padding-top: 0.3rem !important;
+    padding-bottom: 0.3rem !important;
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+    a:hover {
+        color: #fff;
+        text-decoration: none;
+    }
+
+/* Hero Section Styles */
+.hero-section {
+    position: relative;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(255, 193, 7, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* Feature Icons Animation */
+.feature-icon {
+    transition: transform 0.3s ease;
+}
+
+.feature-icon:hover {
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* Card Hover Effects */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(255, 193, 7, 0.2);
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Button Animations */
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+}
