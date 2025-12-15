@@ -1,0 +1,135 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using GymProject1.Data;
+using GymProject1.Entities;
+using Microsoft.AspNetCore.Authorization;
+
+namespace GymProject1.Controllers
+{
+    public class ServiceController : Controller
+    {
+        private readonly ApplicationDbContext _context;
+
+        public ServiceController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        // 1. LİSTELEME (Herkes Görebilir)
+        public async Task<IActionResult> Index()
+        {
+            return View(await _context.Services.ToListAsync());
+        }
+
+        // 2. DETAYLAR (Herkes Görebilir)
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var service = await _context.Services.FirstOrDefaultAsync(m => m.ServiceId == id);
+            if (service == null) return NotFound();
+
+            return View(service);
+        }
+
+        // --- SADECE ADMIN İŞLEMLERİ ---
+
+        // 3. EKLEME (GET) 
+        [Authorize(Roles = "Admin")]
+        public IActionResult Create()
+        {
+            // Salonları listeye doldurup ViewBag ile sayfaya taşıyoruz.
+            // "SalonId" -> Value, "Name" -> Görünecek isim (Salon entity'sinde isim alanı neyse onu yaz, örn: SalonName)
+            ViewData["SalonId"] = new SelectList(_context.Salons, "SalonId", "Name");
+            return View();
+        }
+
+        // 4. EKLEME (POST) Metodunu Bul ve Şöyle Değiştir:
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        // DİKKAT: Bind kısmına "SalonId"yi eklemeyi unutma!
+        public async Task<IActionResult> Create([Bind("ServiceId,Name,DurationMinutes,Price,Description,SalonId")] Service service)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(service);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            // Eğer hata olursa listeyi tekrar doldurup sayfayı geri döndür
+            ViewData["SalonId"] = new SelectList(_context.Salons, "SalonId", "Name", service.SalonId);
+            return View(service);
+        }
+
+        // 5. DÜZENLEME (GET)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
+            var service = await _context.Services.FindAsync(id);
+            if (service == null) return NotFound();
+            return View(service);
+        }
+
+        // 6. DÜZENLEME (POST) - DÜZELTİLDİ: Description Eklendi
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int id, [Bind("ServiceId,Name,DurationMinutes,Price,Description")] Service service)
+        {
+            if (id != service.ServiceId) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(service);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ServiceExists(service.ServiceId)) return NotFound();
+                    else throw;
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(service);
+        }
+
+        // 7. SİLME (GET)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null) return NotFound();
+            var service = await _context.Services.FirstOrDefaultAsync(m => m.ServiceId == id);
+            if (service == null) return NotFound();
+            return View(service);
+        }
+
+        // 8. SİLME (POST)
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var service = await _context.Services.FindAsync(id);
+            if (service != null)
+            {
+                _context.Services.Remove(service);
+            }
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool ServiceExists(int id)
+        {
+            return _context.Services.Any(e => e.ServiceId == id);
+        }
+    }
+}
