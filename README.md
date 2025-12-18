@@ -32,7 +32,7 @@ Spor salonu üyelerinin antrenörlerden kolayca randevu alabilmesini sağlamak, 
 
 ## ⚙️ Kurulum ve Çalıştırma
 
-1.  Projeyi klonlayın:
+1.  Projeyi klonlayın
     ```bash
     git clone [https://github.com/YONZBRO/WEB-PROGRAMLAMA.git](https://github.com/yonzbro/WEB-PROGRAMLAMA.git)
     ```
