@@ -2,29 +2,71 @@
 
 @{
     ViewData["Title"] = "AI Antrenör";
-    // Kullanıcının giriş yapıp yapmadığını değişkene atayalım
+    // Kullanıcının giriş yapıp yapmadığını kontrol et
     bool isUserLoggedIn = User.Identity.IsAuthenticated;
 }
 
+<style>
+    /* Yapay zekadan gelen kartların arka planını koyu yap */
+    .ai-content .card {
+        background-color: #2c3034 !important; /* Koyu gri */
+        border: 1px solid #ffc107 !important; /* Sarı kenarlık */
+        color: #fff !important;
+        margin-bottom: 20px;
+    }
+
+    /* Kart başlıklarını sarı ve koyu yazı yap */
+    .ai-content .card-header {
+        background-color: #ffc107 !important;
+        color: #000 !important;
+        font-weight: bold;
+        border-bottom: 1px solid #000;
+    }
+
+    /* Listeler, paragraflar ve başlıklar beyaz olsun */
+    .ai-content ul, .ai-content li, .ai-content p,
+    .ai-content h1, .ai-content h2, .ai-content h3, .ai-content h4, .ai-content h5 {
+        color: #e0e0e0 !important;
+    }
+
+    /* Tablo varsa koyu yap */
+    .ai-content table {
+        color: #fff !important;
+        background-color: transparent !important;
+        width: 100%;
+    }
+
+    .ai-content th {
+        color: #ffc107 !important;
+    }
+
+    /* Rozetleri (Badge) ayarla */
+    .ai-content .badge {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+</style>
+
 <div class="container mt-5">
     <div class="row">
-        <div class="col-md-4">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h4><i class="fas fa-robot"></i> AI Antrenörüne Danış</h4>
+
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-lg border-secondary" style="background-color: #1a1a1a;">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0 fw-bold"><i class="fas fa-robot me-2"></i> AI Antrenör</h4>
                 </div>
                 <div class="card-body">
                     <form asp-action="Index" method="post" enctype="multipart/form-data">
 
                         <div class="mb-3">
-                            <label>Yaşınız</label>
-                            <input asp-for="Age" class="form-control" type="number" required
-                                   disabled="@(isUserLoggedIn ? null : "disabled")" />
+                            <label class="text-warning fw-bold">Yaşınız</label>
+                            <input asp-for="Age" class="form-control bg-dark text-white border-secondary" type="number" required
+                                   disabled="@(isUserLoggedIn ? null : "disabled")" placeholder="Örn: 25" />
                         </div>
 
                         <div class="mb-3">
-                            <label>Cinsiyet</label>
-                            <select asp-for="Gender" class="form-select"
+                            <label class="text-warning fw-bold">Cinsiyet</label>
+                            <select asp-for="Gender" class="form-select bg-dark text-white border-secondary"
                                     disabled="@(isUserLoggedIn ? null : "disabled")">
                                 <option value="Erkek">Erkek</option>
                                 <option value="Kadın">Kadın</option>
@@ -32,51 +74,53 @@
                         </div>
 
                         <div class="mb-3">
-                            <label>Kilo (kg)</label>
-                            <input asp-for="Weight" class="form-control" type="number" step="0.1" required
-                                   disabled="@(isUserLoggedIn ? null : "disabled")" />
+                            <label class="text-warning fw-bold">Kilo (kg)</label>
+                            <input asp-for="Weight" class="form-control bg-dark text-white border-secondary" type="number" step="0.1" required
+                                   disabled="@(isUserLoggedIn ? null : "disabled")" placeholder="Örn: 75.5" />
                         </div>
 
                         <div class="mb-3">
-                            <label>Boy (cm)</label>
-                            <input asp-for="Height" class="form-control" type="number" required
-                                   disabled="@(isUserLoggedIn ? null : "disabled")" />
+                            <label class="text-warning fw-bold">Boy (cm)</label>
+                            <input asp-for="Height" class="form-control bg-dark text-white border-secondary" type="number" required
+                                   disabled="@(isUserLoggedIn ? null : "disabled")" placeholder="Örn: 180" />
                         </div>
 
                         <div class="mb-3">
-                            <label>Hedefiniz Nedir?</label>
-                            <textarea asp-for="Goal" class="form-control" rows="3"
-                                      placeholder="Örn: Kilo vermek istiyorum..."
+                            <label class="text-warning fw-bold">Hedefiniz Nedir?</label>
+                            <textarea asp-for="Goal" class="form-control bg-dark text-white border-secondary" rows="3"
+                                      placeholder="Örn: Kilo vermek ve karın kası yapmak istiyorum..."
                                       disabled="@(isUserLoggedIn ? null : "disabled")"></textarea>
                             <span asp-validation-for="Goal" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label>Fotoğraf Yükle (Opsiyonel - Vücut Analizi İçin)</label>
-                            <input asp-for="Photo" type="file" class="form-control" accept="image/*"
+                            <label class="text-warning fw-bold">Vücut Fotoğrafı (Opsiyonel)</label>
+                            <input asp-for="Photo" type="file" class="form-control bg-dark text-white border-secondary" accept="image/*"
                                    disabled="@(isUserLoggedIn ? null : "disabled")" />
-                            <small class="text-muted">JPG, PNG veya GIF formatında fotoğraf yükleyebilirsiniz.</small>
+                            <small class="text-white-50" style="font-size: 0.75rem;">
+                                <i class="fas fa-camera"></i> Daha iyi analiz için yükleyiniz.
+                            </small>
                         </div>
 
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                         @if (isUserLoggedIn)
                         {
-                            <button type="submit" class="btn btn-success w-100">
-                                Plan Oluştur <i class="fas fa-magic"></i>
-                            </button>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-warning fw-bold text-dark btn-lg shadow-sm">
+                                    <i class="fas fa-dumbbell me-2"></i> ANALİZ ET VE PLANLA
+                                </button>
+                            </div>
                         }
                         else
                         {
-                            <div class="alert alert-warning text-center p-2 mb-2">
-                                <small>Kullanmak için üye olmalısınız.</small>
+                            <div class="alert alert-danger text-center p-2 mb-3 border-danger bg-dark text-danger">
+                                <small><i class="fas fa-lock"></i> Kullanmak için giriş yapmalısınız.</small>
                             </div>
-                            <a href="/Identity/Account/Register" class="btn btn-primary w-100 mb-2">
-                                Üye Ol
-                            </a>
-                            <a href="/Identity/Account/Login" class="btn btn-outline-secondary w-100">
-                                Giriş Yap
-                            </a>
+                            <div class="d-grid gap-2">
+                                <a href="/Identity/Account/Login" class="btn btn-outline-light">Giriş Yap</a>
+                                <a href="/Identity/Account/Register" class="btn btn-outline-warning">Üye Ol</a>
+                            </div>
                         }
 
                     </form>
@@ -87,22 +131,49 @@
         <div class="col-md-8">
             @if (!string.IsNullOrEmpty(Model.AiResponse))
             {
-                <div class="card shadow border-secondary bg-dark text-white mb-5">
-
-                    <div class="card-header bg-success text-white fw-bold">
-                        <i class="fas fa-clipboard-check me-2"></i> Senin İçin Hazırlanan Plan
+                <div class="card bg-dark border-warning shadow-lg h-100">
+                    <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0 fw-bold"><i class="fas fa-clipboard-list me-2"></i> Senin İçin Hazırlanan Plan</h3>
+                        <span class="badge bg-dark text-warning border border-warning">Özel Analiz</span>
                     </div>
+                    <div class="card-body text-white" style="background-color: #1a1a1a;">
 
-                    <div class="card-body" style="background-color: #2b3035; color: #ffffff;">
-                        <div style="white-space: pre-wrap;">@Model.AiResponse</div>
+                        <div class="ai-content p-2">
+                            @Html.Raw(Model.AiResponse)
+                        </div>
+
+                        <div class="alert alert-info mt-4 bg-dark border-info text-info shadow-sm">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-info-circle fa-2x me-3"></i>
+                                <div>
+                                    <strong>Yasal Uyarı:</strong> Bu program yapay zeka tarafından oluşturulmuştur. Herhangi bir sağlık sorununuz varsa uygulamadan önce doktora danışınız.
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             }
             else
             {
-                <div class="alert alert-dark border-secondary text-white mt-3" role="alert">
-                    <h5 class="alert-heading"><i class="fas fa-info-circle"></i> Bilgilendirme</h5>
-                    <p>Sol taraftaki bilgileri doldurup "Plan Oluştur" butonuna bastığında, Yapay Zeka sana özel antrenman ve beslenme programını burada oluşturacaktır.</p>
+                <div class="d-flex flex-column justify-content-center align-items-center h-100 text-center text-white-50 border border-secondary rounded p-5 shadow"
+                     style="background-color: #1a1a1a; border-style: dashed !important; min-height: 400px;">
+
+                    <div class="mb-4 p-4 rounded-circle bg-dark border border-warning shadow-lg text-warning">
+                        <i class="fas fa-microchip fa-4x"></i>
+                    </div>
+
+                    <h3 class="fw-bold text-white mb-3">Henüz Bir Plan Oluşturulmadı</h3>
+                    <p class="mb-4" style="max-width: 500px;">
+                        Sol taraftaki formu doldurup <strong>"Analiz Et"</strong> butonuna bastığında, Yapay Zeka vücut tipine ve hedeflerine uygun
+                        <strong>antrenman ve beslenme programını</strong> burada oluşturacaktır.
+                    </p>
+
+                    <div class="d-flex gap-3 text-white-50">
+                        <small><i class="fas fa-check text-success"></i> Kişiye Özel</small>
+                        <small><i class="fas fa-check text-success"></i> Beslenme Tavsiyesi</small>
+                        <small><i class="fas fa-check text-success"></i> Görsel Destekli</small>
+                    </div>
                 </div>
             }
         </div>
@@ -110,5 +181,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

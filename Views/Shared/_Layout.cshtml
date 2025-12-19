@@ -15,10 +15,10 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GymProject1.styles.css" asp-append-version="true" />
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100" style="background-color: #1a1a1a;">
 
     <header>
-        <nav class="navbar navbar-expand-sm navbar-dark bg-dark border-bottom shadow-sm mb-3">
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark border-bottom shadow-lg fixed-top">
             <div class="container">
                 <a class="navbar-brand text-warning fw-bold" asp-area="" asp-controller="Home" asp-action="Index" style="font-size: 1.5rem; letter-spacing: 2px;">
                     <i class="fas fa-dumbbell me-2"></i>GYM-A
@@ -29,7 +29,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 w-100">
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
 
                     <ul class="navbar-nav flex-grow-1 align-items-center">
                         <li class="nav-item">
@@ -121,10 +121,10 @@
         </nav>
     </header>
 
-    <main role="main" class="pb-3" style="flex: 1;">
+    <main role="main" class="pt-5" style="flex: 1; min-height: 85vh; margin-top: 20px;">
         @RenderBody()
+        <div class="mb-5 pb-5"></div>
     </main>
-
     @{
         // Ana sayfa kontrolü - sadece Home/Index'te footer göster
         var isHomePage = ViewContext.RouteData.Values["controller"]?.ToString() == "Home" &&
@@ -133,7 +133,7 @@
 
     @if (isHomePage)
     {
-        <footer class="footer mt-auto" style="background-color: #000; border-top: 1px solid #ffc107; padding: 1rem 0;">
+        <footer class="footer py-4" style="background-color: #000; border-top: 1px solid #ffc107;">
             <div class="container">
                 <div class="row g-2 align-items-center">
                     <div class="col-md-4">
@@ -158,8 +158,8 @@
                     </div>
                     <div class="col-md-4">
                         <p class="text-white-50 mb-0" style="font-size: 0.75rem;">
-                            <i class="fas fa-envelope me-1"></i>info@gym-a.com
-                            <span class="ms-2"><i class="fas fa-clock me-1"></i>10:00-22:30</span>
+                            <i class="fas fa-envelope me-1"></i>gyma1907@gmail.com
+                            <span class="ms-2"><i class="fas fa-clock me-1"></i>09.00-23.00</span>
                         </p>
                     </div>
                 </div>

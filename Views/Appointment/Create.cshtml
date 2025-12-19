@@ -66,3 +66,34 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    <script>
+        var allServices = @Html.Raw(ViewBag.ServicesJson);
+        var allTrainers = @Html.Raw(ViewBag.TrainersJson);
+
+        $(document).ready(function () {
+            $('#TrainerId').change(function () {
+                var trainerId = $(this).val();
+                var serviceDropdown = $('#ServiceId');
+                serviceDropdown.empty().append('<option value="">-- Hizmet Seçiniz --</option>');
+
+                if (trainerId) {
+                    var trainer = allTrainers.find(t => t.Id == trainerId);
+                    if (trainer && trainer.Specialty) {
+                        // Eğitmenin uzmanlığını içeren hizmetleri filtrele
+                        var filtered = allServices.filter(s => s.Name.toLowerCase().includes(trainer.Specialty.toLowerCase()));
+
+                        $.each(filtered, function (i, item) {
+                            serviceDropdown.append($('<option>', { value: item.Id, text: item.Name }));
+                        });
+                    } else {
+                        // Uzmanlık yoksa hepsini göster
+                        $.each(allServices, function (i, item) {
+                            serviceDropdown.append($('<option>', { value: item.Id, text: item.Name }));
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+}
