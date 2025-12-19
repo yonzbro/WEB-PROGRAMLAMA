@@ -20,40 +20,41 @@ namespace GymProject1.Controllers
             _context = context;
         }
 
-        // 1. LİSTELEME (Herkes Görebilir)
+        // 1. LİSTELEME
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Services.ToListAsync());
+            // Include ile Salon bilgisini de çekiyoruz ki listede "Hangi Salon?" görünsün
+            return View(await _context.Services.Include(s => s.Salon).ToListAsync());
         }
 
-        // 2. DETAYLAR (Herkes Görebilir)
+        // 2. DETAYLAR
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
 
-            var service = await _context.Services.FirstOrDefaultAsync(m => m.ServiceId == id);
+            var service = await _context.Services
+                .Include(s => s.Salon) // Detayda salon adı görünsün
+                .FirstOrDefaultAsync(m => m.ServiceId == id);
+
             if (service == null) return NotFound();
 
             return View(service);
         }
 
-        // --- SADECE ADMIN İŞLEMLERİ ---
+        // --- ADMIN İŞLEMLERİ ---
 
-        // 3. EKLEME (GET) 
+        // 3. EKLEME (GET)
         [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
-            // Salonları listeye doldurup ViewBag ile sayfaya taşıyoruz.
-            // "SalonId" -> Value, "Name" -> Görünecek isim (Salon entity'sinde isim alanı neyse onu yaz, örn: SalonName)
             ViewData["SalonId"] = new SelectList(_context.Salons, "SalonId", "Name");
             return View();
         }
 
-        // 4. EKLEME (POST) Metodunu Bul ve Şöyle Değiştir:
+        // 4. EKLEME (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        // DİKKAT: Bind kısmına "SalonId"yi eklemeyi unutma!
         public async Task<IActionResult> Create([Bind("ServiceId,Name,DurationMinutes,Price,Description,SalonId")] Service service)
         {
             if (ModelState.IsValid)
@@ -62,7 +63,6 @@ namespace GymProject1.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            // Eğer hata olursa listeyi tekrar doldurup sayfayı geri döndür
             ViewData["SalonId"] = new SelectList(_context.Salons, "SalonId", "Name", service.SalonId);
             return View(service);
         }
@@ -72,16 +72,22 @@ namespace GymProject1.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
+
             var service = await _context.Services.FindAsync(id);
             if (service == null) return NotFound();
+
+            // DÜZELTME: Düzenleme sayfasında da Salon dropdown'ı dolu gelmeli
+            ViewData["SalonId"] = new SelectList(_context.Salons, "SalonId", "Name", service.SalonId);
+
             return View(service);
         }
 
-        // 6. DÜZENLEME (POST) - DÜZELTİLDİ: Description Eklendi
+        // 6. DÜZENLEME (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("ServiceId,Name,DurationMinutes,Price,Description")] Service service)
+        // DÜZELTME: Bind içine "SalonId" eklendi.
+        public async Task<IActionResult> Edit(int id, [Bind("ServiceId,Name,DurationMinutes,Price,Description,SalonId")] Service service)
         {
             if (id != service.ServiceId) return NotFound();
 
@@ -99,6 +105,8 @@ namespace GymProject1.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            // Hata olursa dropdown tekrar dolsun
+            ViewData["SalonId"] = new SelectList(_context.Salons, "SalonId", "Name", service.SalonId);
             return View(service);
         }
 
@@ -107,23 +115,44 @@ namespace GymProject1.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
-            var service = await _context.Services.FirstOrDefaultAsync(m => m.ServiceId == id);
+
+            var service = await _context.Services
+                .Include(s => s.Salon)
+                .FirstOrDefaultAsync(m => m.ServiceId == id);
+
             if (service == null) return NotFound();
+
             return View(service);
         }
 
-        // 8. SİLME (POST)
+        // 8. SİLME (POST) - KRİTİK DÜZELTME BURADA!
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var service = await _context.Services.FindAsync(id);
+
             if (service != null)
             {
+                // --- İŞTE BURASI HATAYI ÇÖZER ---
+                // Önce bu hizmete ait tüm randevuları bul ve sil
+                var relatedAppointments = _context.Appointments
+                                                  .Where(a => a.ServiceId == id)
+                                                  .ToList();
+
+                if (relatedAppointments.Any())
+                {
+                    _context.Appointments.RemoveRange(relatedAppointments);
+                    // Değişikliği hemen kaydet ki Service silinirken engel kalmasın
+                    await _context.SaveChangesAsync();
+                }
+                // --------------------------------
+
                 _context.Services.Remove(service);
+                await _context.SaveChangesAsync(); // Hizmeti sil
             }
-            await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 

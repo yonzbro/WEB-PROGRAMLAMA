@@ -34,70 +34,60 @@ namespace GymProject1.Controllers
             string? apiKey = _configuration["GeminiSettings:ApiKey"];
             if (string.IsNullOrEmpty(apiKey))
             {
-                model.AiResponse = "Hata: API Key 'appsettings.json' içinde bulunamadı.";
+                model.AiResponse = "<div class='alert alert-danger'>Hata: API Key 'appsettings.json' içinde bulunamadı.</div>";
                 return View(model);
             }
 
-            // =========================================================================
-            // AKILLI MODEL SEÇİMİ (429 Hatasını Çözmek İçin)
-            // =========================================================================
-            // Varsayılan olarak en güvenli modeli seçiyoruz.
+            // Varsayılan model
             string modelId = "gemini-1.5-flash";
 
             try
             {
-                // Google'a soruyoruz: "Hangi modellerin var?"
+                // Modelleri dinamik olarak seç (Flash öncelikli, yoksa Pro)
                 var availableModels = await GetAvailableModelNamesAsync(apiKey);
-
                 if (availableModels != null && availableModels.Count > 0)
                 {
-                    // 1. ÖNCELİK: İsmi tam olarak "gemini-1.5-flash" olanı bul. (En yüksek kota bunda)
-                    var bestModel = availableModels.FirstOrDefault(m => m.Equals("gemini-1.5-flash", StringComparison.OrdinalIgnoreCase));
-
-                    // 2. ÖNCELİK: Eğer o yoksa, isminde "flash" geçen en yeni modeli bul.
-                    if (string.IsNullOrEmpty(bestModel))
-                    {
-                        bestModel = availableModels.FirstOrDefault(m => m.Contains("flash", StringComparison.OrdinalIgnoreCase));
-                    }
-
-                    // 3. ÖNCELİK: Flash yoksa, mecburen "pro" modeline bak (Kota riski var ama hiç yoktan iyidir)
-                    if (string.IsNullOrEmpty(bestModel))
-                    {
-                        bestModel = availableModels.FirstOrDefault(m => m.Contains("pro", StringComparison.OrdinalIgnoreCase));
-                    }
-
-                    // 4. ÖNCELİK: Hiçbiri yoksa listedeki ilkini al.
-                    if (string.IsNullOrEmpty(bestModel))
-                    {
-                        bestModel = availableModels.First();
-                    }
-
-                    // URL'de kullanmak için "models/" kısmını temizliyoruz.
+                    var bestModel = availableModels.FirstOrDefault(m => m.Equals("gemini-1.5-flash", StringComparison.OrdinalIgnoreCase))
+                                 ?? availableModels.FirstOrDefault(m => m.Contains("flash", StringComparison.OrdinalIgnoreCase))
+                                 ?? availableModels.FirstOrDefault(m => m.Contains("pro", StringComparison.OrdinalIgnoreCase))
+                                 ?? availableModels.First();
                     modelId = bestModel.Replace("models/", "");
                 }
             }
             catch
             {
-                // Liste çekemezse kod patlamaz, en başta tanımladığımız "gemini-1.5-flash" ile devam eder.
+                // Model listesi alınamazsa varsayılan ile devam et
             }
 
-            // 2. Çalışan model ID'si ile URL oluşturuluyor
             string apiUrl = $"https://generativelanguage.googleapis.com/v1beta/models/{modelId}:generateContent?key={apiKey}";
 
-            // 3. Prompt Hazırlığı
-            string userPrompt = $"Ben {model.Age} yaşında, {model.Weight} kilo, {model.Height} cm boyunda bir {model.Gender}. " +
-                                $"Hedefim: {model.Goal}. " +
-                                $"Bana maddeler halinde kısa ve etkili bir haftalık antrenman ve beslenme tavsiyesi verir misin? Türkçe olsun.";
+            // -----------------------------------------------------------------------------------------
+            // 2. GELİŞMİŞ PROMPT (DARK MODE & OPTİMİZE GÖRSEL)
+            // -----------------------------------------------------------------------------------------
+            string userPrompt =
+                $"Ben {model.Age} yaşında, {model.Weight} kilo, {model.Height} cm boyunda bir {model.Gender}. " +
+                $"Hedefim: {model.Goal}. " +
+                $"Bana haftalık profesyonel bir antrenman ve beslenme programı hazırla.\n\n" +
+
+                $"### TASARIM VE FORMAT TALİMATLARI (ÇOK ÖNEMLİ):\n" +
+                $"1. Cevabı **HTML formatında** ver. Bootstrap 'card', 'badge', 'list-group' yapılarını kullan.\n" +
+                $"2. **DARK MODE UYUMU:** Site siyah temalıdır. Kartların arka planı için `bg-dark` veya `bg-secondary`, metinler için `text-white` veya `text-light` sınıflarını kullan. Asla beyaz arka plan kullanma.\n" +
+                $"3. **GÖRSEL KURALI:** Yemekler için kesinlikle resim koyma. Her egzersiz için de resim koyma.\n" +
+                $"4. Sadece o gün çalıştırılan **ANA KAS GRUBUNUN** (Örn: Göğüs, Sırt, Bacak) estetik ve gelişmiş bir fotoğrafını günün başlığına ekle.\n" +
+                $"5. Yani 'Pazartesi: Göğüs' dediğinde, sadece gelişmiş bir göğüs kası (chest muscles) fotoğrafı koy.\n" +
+                $"6. Görsel URL formatı şu olmalı: `<img src='https://image.pollinations.ai/prompt/aesthetic {model.Gender} fitness model with developed [KAS_GRUBU_INGILIZCE] muscles, gym lighting, hyper realistic?width=600&height=300&nologo=true' style='width:100%; border-radius:10px; margin-bottom:15px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);' alt='Hedef Vücut' />`\n" +
+                $"7. İçerik dili Türkçe, görsel promptları İngilizce olsun.\n" +
+                $"8. Markdown etiketi (```html) kullanma, direkt saf HTML kodunu ver.";
 
             if (model.Photo != null && model.Photo.Length > 0)
             {
-                userPrompt += " Ayrıca yüklediğim fotoğrafıma bakarak vücut tipime göre daha detaylı önerilerde bulunabilir misin?";
+                userPrompt += " Ayrıca yüklediğim fotoğrafıma bakarak vücut tipime göre (ektomorf/endomorf vs.) özel tavsiyeler ekle.";
             }
 
-            // JSON Gövdesi Hazırlama
+            // JSON Gövdesi Hazırlığı
             var parts = new List<object> { new { text = userPrompt } };
 
-            // Fotoğraf Ekleme (Varsa)
+            // Fotoğraf Yükleme İşlemi (Varsa)
             if (model.Photo != null && model.Photo.Length > 0)
             {
                 using (var memoryStream = new MemoryStream())
@@ -106,44 +96,19 @@ namespace GymProject1.Controllers
                     byte[] imageBytes = memoryStream.ToArray();
                     string base64Image = Convert.ToBase64String(imageBytes);
 
-                    string mimeType = model.Photo.ContentType;
-                    // MIME Type bulamazsa uzantıdan tahmin et
-                    if (string.IsNullOrEmpty(mimeType))
-                    {
-                        string extension = Path.GetExtension(model.Photo.FileName).ToLower();
-                        mimeType = extension switch
-                        {
-                            ".jpg" or ".jpeg" => "image/jpeg",
-                            ".png" => "image/png",
-                            ".webp" => "image/webp",
-                            _ => "image/jpeg"
-                        };
-                    }
+                    string ext = Path.GetExtension(model.Photo.FileName).ToLower();
+                    string mimeType = ext == ".png" ? "image/png" : ext == ".webp" ? "image/webp" : "image/jpeg";
 
-                    parts.Add(new
-                    {
-                        inline_data = new
-                        {
-                            mime_type = mimeType,
-                            data = base64Image
-                        }
-                    });
+                    parts.Add(new { inline_data = new { mime_type = mimeType, data = base64Image } });
                 }
             }
 
-            var requestBody = new
-            {
-                contents = new[]
-                {
-                    new { parts = parts.ToArray() }
-                }
-            };
+            var requestBody = new { contents = new[] { new { parts = parts.ToArray() } } };
 
-            // 5. İsteği Gönderme
+            // İsteği Gönderme
             using (var client = new HttpClient())
             {
                 var content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
-
                 try
                 {
                     var response = await client.PostAsync(apiUrl, content);
@@ -156,22 +121,25 @@ namespace GymProject1.Controllers
                         if (result?.candidates != null && result.candidates.Count > 0)
                         {
                             string aiText = result.candidates[0].content.parts[0].text;
+
+                            // Markdown temizliği (Bazen ```html ile sarılı gelir, temizliyoruz)
+                            aiText = aiText.Replace("```html", "").Replace("```", "");
+
                             model.AiResponse = aiText;
                         }
                         else
                         {
-                            model.AiResponse = $"AI ({modelId}) boş cevap döndü.";
+                            model.AiResponse = "<div class='alert alert-warning'>Yapay zeka boş cevap döndü. Lütfen tekrar deneyin.</div>";
                         }
                     }
                     else
                     {
-                        var errorContent = await response.Content.ReadAsStringAsync();
-                        model.AiResponse = $"Hata oluştu.\nKullanılan Model: {modelId}\nDurum Kodu: {response.StatusCode}\nDetay: {errorContent}";
+                        model.AiResponse = $"<div class='alert alert-danger'>Hata oluştu. Kod: {response.StatusCode}</div>";
                     }
                 }
                 catch (Exception ex)
                 {
-                    model.AiResponse = "Bağlantı hatası: " + ex.Message;
+                    model.AiResponse = $"<div class='alert alert-danger'>Bağlantı hatası: {ex.Message}</div>";
                 }
             }
 
@@ -198,7 +166,6 @@ namespace GymProject1.Controllers
                         {
                             foreach (var m in result.models)
                             {
-                                // Sadece "generateContent" destekleyenleri alalım
                                 string name = (string)m.name;
                                 string supportedMethods = m.supportedGenerationMethods?.ToString() ?? "";
 
@@ -218,7 +185,7 @@ namespace GymProject1.Controllers
             return list;
         }
 
-        // DEBUG METODU: Tarayıcıdan modelleri manuel görmek istersen: /Ai/CheckModels
+        // DEBUG METODU (Opsiyonel)
         [HttpGet]
         public async Task<IActionResult> CheckModels()
         {

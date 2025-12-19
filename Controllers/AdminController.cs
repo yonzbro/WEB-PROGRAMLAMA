@@ -11,9 +11,8 @@ namespace GymProject1.Controllers
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<AppUser> _userManager; // 1. Üye yönetimi için bunu ekledik
+        private readonly UserManager<AppUser> _userManager;
 
-        // 2. Constructor'ı güncelledik (UserManager'ı içeri aldık)
         public AdminController(ApplicationDbContext context, UserManager<AppUser> userManager)
         {
             _context = context;
@@ -26,6 +25,7 @@ namespace GymProject1.Controllers
             ViewBag.TrainerCount = await _context.Trainers.CountAsync();
             ViewBag.ServiceCount = await _context.Services.CountAsync();
             ViewBag.AppointmentCount = await _context.Appointments.CountAsync();
+            ViewBag.SalonCount = await _context.Salons.CountAsync();
 
             // Ekstra: Toplam üye sayısını da gösterelim
             ViewBag.MemberCount = await _userManager.Users.CountAsync();
@@ -33,7 +33,7 @@ namespace GymProject1.Controllers
             return View();
         }
 
-        // --- YENİ EKLENEN: ÜYE LİSTELEME VE YÖNETME ---
+        // --- ÜYE LİSTELEME VE YÖNETME ---
 
         // 3. Üyeleri Listeleyen Sayfa
         public async Task<IActionResult> Members()
@@ -58,19 +58,35 @@ namespace GymProject1.Controllers
             return View(userViewModels);
         }
 
-        // 4. Üye Silme İşlemi
+        // 4. Üye Silme İşlemi (GÜNCELLENDİ: ARTIK HATA VERMEZ)
         [HttpPost]
         public async Task<IActionResult> DeleteMember(string id)
         {
+            // 1. Kullanıcıyı bul
             var user = await _userManager.FindByIdAsync(id);
+
             if (user != null)
             {
+                // 2. KRİTİK ADIM: Önce bu kullanıcının randevularını temizle
+                // Eğer bunu yapmazsak SQL "Foreign Key" hatası verir.
+                var userAppointments = _context.Appointments
+                                               .Where(a => a.AppUserId == id)
+                                               .ToList();
+
+                if (userAppointments.Any())
+                {
+                    _context.Appointments.RemoveRange(userAppointments);
+                    await _context.SaveChangesAsync(); // Randevuları silmeyi onayla
+                }
+
+                // 3. Randevular temizlendi, şimdi üyeyi silebiliriz
                 await _userManager.DeleteAsync(user);
             }
+
             return RedirectToAction(nameof(Members));
         }
 
-        // Listeleme için yardımcı model (Controller içinde kalabilir)
+        // Listeleme için yardımcı model
         public class UserViewModel
         {
             public string Id { get; set; }
